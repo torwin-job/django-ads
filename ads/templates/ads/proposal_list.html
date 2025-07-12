@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Мои предложения обмена</h1>
+<form method="get" class="row g-2 mb-3">
+    <div class="col-md-4">
+        <select name="status" class="form-select">
+            <option value="">Все статусы</option>
+            <option value="pending" {% if status == 'pending' %}selected{% endif %}>Ожидает</option>
+            <option value="accepted" {% if status == 'accepted' %}selected{% endif %}>Принята</option>
+            <option value="rejected" {% if status == 'rejected' %}selected{% endif %}>Отклонена</option>
+        </select>
+    </div>
+    <div class="col-md-2">
+        <button type="submit" class="btn btn-primary w-100">Фильтровать</button>
+    </div>
+</form>
+<table class="table table-hover align-middle">
+    <tr>
+        <th>Отправитель</th><th>Получатель</th><th>Комментарий</th><th>Статус</th><th>Дата</th>
+    </tr>
+    {% for proposal in page_obj %}
+    <tr>
+        <td>{{ proposal.ad_sender }}</td>
+        <td>{{ proposal.ad_receiver }}</td>
+        <td>{{ proposal.comment }}</td>
+        <td>{{ proposal.get_status_display }}
+            {% if proposal.status == 'pending' and proposal.ad_receiver.user == request.user %}
+                <form method="post" action="{% url 'proposal_update_status' proposal.pk %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button name="status" value="accepted" class="btn btn-success btn-sm">Принять</button>
+                    <button name="status" value="rejected" class="btn btn-danger btn-sm">Отклонить</button>
+                </form>
+            {% endif %}
+        </td>
+        <td>{{ proposal.created_at|date:'d.m.Y H:i' }}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="5">Нет предложений</td></tr>
+    {% endfor %}
+</table>
+<div class="d-flex justify-content-between align-items-center">
+    <div>
+        <a href="{% url 'ad_list' %}" class="btn btn-outline-secondary">К объявлениям</a>
+    </div>
+    <div>
+        {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-outline-secondary btn-sm">Назад</a>
+        {% endif %}
+        <span class="mx-2">Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</span>
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="btn btn-outline-secondary btn-sm">Вперёд</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %} 

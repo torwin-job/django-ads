@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Объявления</h1>
+<form method="get" class="row g-2 mb-3">
+    <div class="col-md-4"><input type="text" name="q" class="form-control" placeholder="Поиск..." value="{{ query }}"></div>
+    <div class="col-md-3"><input type="text" name="category" class="form-control" placeholder="Категория" value="{{ category }}"></div>
+    <div class="col-md-3"><input type="text" name="condition" class="form-control" placeholder="Состояние" value="{{ condition }}"></div>
+    <div class="col-md-2"><button type="submit" class="btn btn-primary w-100">Искать</button></div>
+</form>
+<a href="{% url 'ad_create' %}" class="btn btn-success mb-3">Создать объявление</a>
+<table class="table table-hover align-middle">
+    <tr>
+        <th>Фото</th><th>Заголовок</th><th>Категория</th><th>Состояние</th><th>Пользователь</th><th>Дата</th><th></th>
+    </tr>
+    {% for ad in page_obj %}
+    <tr>
+        <td>
+            {% if ad.image %}
+                <img src="{{ ad.image.url }}" alt="Фото" style="max-width:80px; max-height:80px; border-radius:6px; box-shadow:0 2px 8px #e0e0e0;">
+            {% else %}
+                <span style="display:inline-block;width:80px;height:80px;background:#f1f3f6;border-radius:6px;box-shadow:0 2px 8px #e0e0e0;text-align:center;line-height:80px;color:#bbb;font-size:2em;">—</span>
+            {% endif %}
+        </td>
+        <td>{{ ad.title }}</td>
+        <td>{{ ad.category }}</td>
+        <td>{{ ad.condition }}</td>
+        <td>{{ ad.user }}</td>
+        <td>{{ ad.created_at|date:'d.m.Y H:i' }}</td>
+        <td>
+            {% if ad.user == request.user %}
+                <a href="{% url 'ad_edit' ad.pk %}" class="btn btn-outline-secondary btn-sm">Редактировать</a>
+                <a href="{% url 'ad_delete' ad.pk %}" class="btn btn-outline-danger btn-sm">Удалить</a>
+                {% if incoming.ad.pk %}
+                    <span class="badge bg-info">{{ incoming.ad.pk }} предлож.</span>
+                {% endif %}
+            {% else %}
+                {% load dict_extras %}
+                {% if exchange_map|get_item:ad.pk %}
+                    <span class="badge bg-success">Обмен уже предложен</span>
+                {% else %}
+                    <a href="{% url 'proposal_create' ad.pk %}" class="btn btn-primary btn-sm">Предложить обмен</a>
+                {% endif %}
+            {% endif %}
+        </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="6">Нет объявлений</td></tr>
+    {% endfor %}
+</table>
+<div class="d-flex justify-content-between align-items-center">
+    <div>
+        <a href="{% url 'proposal_list' %}" class="btn btn-outline-info">Мои предложения обмена</a>
+    </div>
+    <div>
+        {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-outline-secondary btn-sm">Назад</a>
+        {% endif %}
+        <span class="mx-2">Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</span>
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="btn btn-outline-secondary btn-sm">Вперёд</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %} 

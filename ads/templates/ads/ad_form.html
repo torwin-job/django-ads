@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>{% if edit %}Редактировать объявление{% else %}Создать объявление{% endif %}</h1>
+<form method="post" enctype="multipart/form-data" class="mb-3">{% csrf_token %}
+    {{ form.as_p }}
+    {% if edit and form.instance.image %}
+        <div class="mb-2">
+            <img src="{{ form.instance.image.url }}" alt="Текущее изображение" style="max-width:180px; max-height:180px; border-radius:8px; box-shadow:0 2px 8px #e0e0e0;">
+        </div>
+    {% endif %}
+    <button type="submit" class="btn btn-success">{% if edit %}Сохранить{% else %}Создать{% endif %}</button>
+    <a href="{% url 'ad_list' %}" class="btn btn-outline-secondary">Назад к списку</a>
+</form>
+{% endblock %} 

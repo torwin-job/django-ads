@@ -1,0 +1,9 @@
+Django==5.0
+django-cors-headers==4.5.0
+drf-yasg==1.21.7
+djangorestframework==3.14.0
+djangorestframework-simplejwt==5.5.0
+flake8>=6.0.0
+black>=24.0.0 
+setuptools==80.9.0
+rich==14.0.0
