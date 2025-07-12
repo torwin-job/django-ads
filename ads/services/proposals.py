@@ -1,6 +1,5 @@
 from functools import reduce
 import operator
-from typing import Any
 from django.db.models import Q, QuerySet
 from django.contrib.auth.models import AbstractBaseUser
 from django.db import transaction
