@@ -1,15 +1,11 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import Ad, ExchangeProposal
+from .models import Ad
 from .forms import AdForm, ExchangeProposalForm, RegisterForm
 from django.core.paginator import Paginator
-from django.db.models import Q
 from django.contrib.auth import login
 from django.views.decorators.http import require_POST
-from django.db import connection
-from functools import reduce
-import operator
 from ads.services.ads import search_ads, get_ads_indicators, get_user_exchange_map
 from ads.services.proposals import search_proposals, atomic_update_proposal_status
 
