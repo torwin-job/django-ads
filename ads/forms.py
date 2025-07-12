@@ -17,6 +17,6 @@ class ExchangeProposalForm(forms.ModelForm):
 
 
 class RegisterForm(UserCreationForm):
-    class Meta:
+    class Meta(UserCreationForm.Meta):
         model = get_user_model()
         fields = ("username", "password1", "password2")

@@ -19,7 +19,7 @@ ENV/
 env/
 .venv/
 .venv/*
-
+clear_pycache.py
 # VSCode
 .vscode/
 

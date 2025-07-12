@@ -7,6 +7,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 User = get_user_model()
 
 
+# Сериализатор для регистрации пользователя
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
 
@@ -15,22 +16,24 @@ class RegisterSerializer(serializers.ModelSerializer):
         fields = ("username", "password")
 
     def create(self, validated_data):
+        # Создаёт нового пользователя с указанными данными
         user = User.objects.create_user(
             username=validated_data["username"], password=validated_data["password"]
         )
         return user
 
-
+# View для регистрации пользователя через API
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = RegisterSerializer
     permission_classes = [permissions.AllowAny]
 
-
+# View для выхода пользователя (logout) через API
 class LogoutView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
+        # Делает refresh-токен невалидным (logout)
         try:
             refresh_token = request.data["refresh"]
             token = RefreshToken(refresh_token)
